@@ -1,0 +1,39 @@
+version: '3.12'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: '0000'
+      MYSQL_DATABASE: 'palink'
+      TZ: Asia/Seoul
+    ports:
+      - "3306:3306"
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+      start_period: 30s  # 더 충분한 대기시간 설정
+
+  fastapi:
+    build: .
+    container_name: fastapi_app
+    working_dir: /code
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy  # MySQL이 완전히 실행된 후 FastAPI 실행
+    environment:
+      DATABASE_URL: "mysql://root:0000@db:3306/palink"
+    restart: on-failure  # FastAPI가 MySQL이 준비되지 않아 종료되면 자동 재시작
+
+volumes:
+  mysql-data:
