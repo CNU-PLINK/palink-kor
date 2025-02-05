@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import func
 import models, schemas
-from database import engine, get_db
+from database import engine, get_db, Base
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 from typing import List
@@ -10,16 +10,13 @@ from typing import List
 
 app = FastAPI()
 
-<<<<<<< HEAD
 Base.metadata.create_all(bind=engine)
 origins = [
     # "https://palink-v2.web.app",  # 웹앱 도메인
     "http://localhost"            # 로컬 테스트를 위한 설정
 ]
-=======
 # CORS 설정
 origins = ["*"]  # 모든 출처 허용
->>>>>>> cd7aa286062a5fe8839a6214d4a5886dbfb175c1
 
 app.add_middleware(
     CORSMiddleware,
