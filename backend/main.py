@@ -4,7 +4,6 @@ from sqlalchemy.sql import func
 import models, schemas
 from database import engine, get_db, Base
 from fastapi.middleware.cors import CORSMiddleware
-from datetime import datetime
 from typing import List
 
 
